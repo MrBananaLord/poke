@@ -17,5 +17,17 @@ module Poke
       puts "v#{Poke::VERSION}"
     end
     map %w[--version -v] => :version
+
+    desc "curl FILE", "Command description..."
+    method_option :help, aliases: "-h", type: :boolean,
+                         desc: "Display usage information"
+    def curl(file)
+      if options[:help]
+        invoke :help, ["curl"]
+      else
+        require_relative "commands/curl"
+        Poke::Commands::Curl.new(file, options).execute
+      end
+    end
   end
 end
