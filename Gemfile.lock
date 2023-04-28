@@ -6,7 +6,7 @@ PATH
       thor (~> 1.0)
 
 PATH
-  remote: /Users/janbator/Projects/cli-sandbox/tty
+  remote: /Users/janbator/Projects/tty
   specs:
     tty (0.10.0)
       bundler (~> 2.0)
