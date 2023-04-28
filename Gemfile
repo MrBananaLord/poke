@@ -10,3 +10,6 @@ gem "rake", "~> 13.0"
 gem "rake-compiler"
 
 gem "rspec", "~> 3.0"
+
+gem "tty", path: "/Users/janbator/Projects/cli-sandbox/tty"
+gem "pry"
