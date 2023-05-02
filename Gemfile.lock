@@ -5,17 +5,6 @@ PATH
       pastel (~> 0.8)
       thor (~> 1.0)
 
-PATH
-  remote: /Users/janbator/Projects/tty
-  specs:
-    tty (0.10.0)
-      bundler (~> 2.0)
-      pry
-      thor (~> 1.0)
-      tty-command
-      tty-file (~> 0.10)
-      tty-which (~> 0.4)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -44,6 +33,13 @@ GEM
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
     thor (1.2.1)
+    tty (0.10.0)
+      bundler (~> 2.0)
+      pry
+      thor (~> 1.0)
+      tty-command
+      tty-file (~> 0.10)
+      tty-which (~> 0.4)
     tty-color (0.6.0)
     tty-command (0.10.1)
       pastel (~> 0.8)
@@ -73,7 +69,7 @@ DEPENDENCIES
   rake (~> 13.0)
   rake-compiler
   rspec (~> 3.0)
-  tty!
+  tty
 
 BUNDLED WITH
    2.4.3
