@@ -29,5 +29,11 @@ module Poke
         Poke::Commands::Curl.new(file, options).execute
       end
     end
+
+    default_task :curl
+
+    def self.exit_on_failure?
+      true
+    end
   end
 end
