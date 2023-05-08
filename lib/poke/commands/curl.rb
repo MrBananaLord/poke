@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "../command"
+require_relative '../command'
+require 'json'
+require 'pathname'
+require 'pry'
 
 module Poke
   module Commands
@@ -10,15 +13,24 @@ module Poke
         @options = options
       end
 
-      def execute(input: $stdin, output: $stdout)
-        # home = command(printer: :null).run('echo $HOME').out.strip
+      def execute(input: $stdin, output: $stdout, errors: $stderr)
+        # home = command(printer: :quiet).run('echo $HOME').out.strip
         # endpoints = command(printer: :null).run('find $HOME/.poke -name "*.curl"')
 
         # endpoint = prompt.select('Select the endpoint', endpoints.out.split("\n"), filter: true)
 
-        # env = 'development' # TODO: how to pass options
-        # variables = JSON.parse(File.read("#{::Pathname.new(endpoint).dirname}/variables.json"))[env]
-        # variables = variables.map { |e| e.join('=') }.flatten.join(' ')
+        env = 'development' # TODO: how to pass options
+        variables = JSON.parse(File.read("#{::Pathname.new(@file).dirname}/variables.json"))[env]
+        # variables = variables.map { |e| e.join('=') }
+        errors << variables
+        errors << "\n\n"
+
+        out, err = command(printer: :null).run(variables, @file) rescue TTY::Command::ExitError 
+        errors << err
+        output << "\n"
+
+        output << out
+        output << "\n"
 
         # File.open("#{home}/.poke/response.json", 'w+') do |file|
         #   file.write command(printer: :null, pty: true).run("#{variables} #{endpoint}").out
@@ -26,7 +38,6 @@ module Poke
 
         # require 'tty-editor'
         # TTY::Editor.open("#{home}/.poke/response.json")
-        output.puts "OK"
       end
     end
   end

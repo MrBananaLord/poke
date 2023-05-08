@@ -19,19 +19,19 @@ module Poke
     # @see http://www.rubydoc.info/gems/tty-command
     #
     # @api public
-    # def command(**options)
-    #   require "tty-command"
-    #   TTY::Command.new(options)
-    # end
+    def command(options = {})
+      require 'tty-command'
+      TTY::Command.new(**options)
+    end
 
     # The interactive prompt
     #
     # @see http://www.rubydoc.info/gems/tty-prompt
     #
     # @api public
-    # def prompt(**options)
+    # def prompt(options)
     #   require "tty-prompt"
-    #   TTY::Prompt.new(options)
+    #   TTY::Prompt.new(**options)
     # end
   end
 end
