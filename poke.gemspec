@@ -55,7 +55,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tty-cursor', '~> 0.7'
 
   # Open a file or text in a terminal text editor.
-  # spec.add_dependency "tty-editor", "~> 0.6"
+  spec.add_dependency 'tty-editor', '~> 0.6'
 
   # Terminal exit codes for humans and machines.
   # spec.add_dependency "tty-exit", "~> 0.1"

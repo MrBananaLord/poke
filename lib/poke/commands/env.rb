@@ -5,6 +5,7 @@ require_relative '../group_variables'
 
 require 'json'
 require 'tty-table'
+require 'tty-editor'
 
 module Poke
   module Commands
@@ -27,20 +28,25 @@ module Poke
 
       def manage_group_config(output:, group_name:)
         loop do
-          group_variables = GroupVariables.from_path(@config_paths[@group_names.index(group_name)])
+          config_path = @config_paths[@group_names.index(group_name)]
+          group_variables = GroupVariables.from_path(config_path)
 
           output << cursor.save
 
           render(output, group_name, group_variables)
 
-          case prompt.keypress('q → quit | s → set default env', quiet: true)
+          case prompt.keypress('q → quit | s → set default env | e → edit config file', quiet: true)
           when 's'
             group_variables.default_env = prompt.select('Select new default environment', group_variables.envs,
                                                         filter: true, quiet: true)
-            group_variables.save_to(@config_paths[@group_names.index(group_name)])
+            group_variables.save_to(config_path)
 
             output << cursor.restore
             output << cursor.clear_screen_down
+          when 'e'
+            TTY::Editor.open(config_path)
+            output << "kthxbye\n"
+            break
           when 'q'
             output << "kthxbye\n"
             break
