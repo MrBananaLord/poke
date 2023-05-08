@@ -18,6 +18,18 @@ module Poke
     end
     map %w[--version -v] => :version
 
+    desc 'env', 'Command description...'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def env(*)
+      if options[:help]
+        invoke :help, ['env']
+      else
+        require_relative 'commands/env'
+        Poke::Commands::Env.new(options).execute
+      end
+    end
+
     desc 'curl FILE', 'Command description...'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'

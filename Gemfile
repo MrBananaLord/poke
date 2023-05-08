@@ -12,4 +12,5 @@ gem "rake-compiler"
 gem "rspec", "~> 3.0"
 
 gem "tty"#, path: "/Users/janbator/Projects/tty" # That's with some of my "fixes" :D
-gem "pry"
+gem "pry", require: true
+gem "pry-nav", require: true

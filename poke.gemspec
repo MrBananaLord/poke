@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
-require_relative "lib/poke/version"
+require_relative 'lib/poke/version'
 
 Gem::Specification.new do |spec|
-  spec.name = "poke"
-  spec.license      = "MIT"
+  spec.name = 'poke'
+  spec.license = 'MIT'
   spec.version = Poke::VERSION
-  spec.authors = ["Jan Bator"]
-  spec.email = ["jan@bloomandwild.com"]
+  spec.authors = ['Jan Bator']
+  spec.email = ['jan@bloomandwild.com']
 
-  spec.summary = "manage curl requests"
-  spec.homepage = "https://github.com/MrBananaLord/poke"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.summary = 'manage curl requests'
+  spec.homepage = 'https://github.com/MrBananaLord/poke'
+  spec.required_ruby_version = '>= 2.6.0'
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/MrBananaLord/poke"
+  spec.metadata['homepage_uri'] = spec.homepage
+  spec.metadata['source_code_uri'] = 'https://github.com/MrBananaLord/poke'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -25,10 +25,10 @@ Gem::Specification.new do |spec|
       (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|circleci)|appveyor)})
     end
   end
-  spec.bindir = "exe"
+  spec.bindir = 'exe'
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
-  spec.extensions = ["ext/poke/extconf.rb"]
+  spec.require_paths = ['lib']
+  spec.extensions = ['ext/poke/extconf.rb']
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
@@ -36,8 +36,8 @@ Gem::Specification.new do |spec|
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
 
-  spec.add_dependency "thor", "~> 1.0"
-  spec.add_dependency "pastel", "~> 0.8"
+  spec.add_dependency 'pastel', '~> 0.8'
+  spec.add_dependency 'thor', '~> 1.0'
 
   # Draw various frames and boxes in terminal window.
   # spec.add_dependency "tty-box", "~> 0.7"
@@ -52,7 +52,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "tty-config", "~> 0.4"
 
   # Terminal cursor positioning, visibility and text manipulation.
-  # spec.add_dependency "tty-cursor", "~> 0.7"
+  spec.add_dependency 'tty-cursor', '~> 0.7'
 
   # Open a file or text in a terminal text editor.
   # spec.add_dependency "tty-editor", "~> 0.6"
@@ -100,7 +100,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "tty-spinner", "~> 0.9"
 
   # A flexible and intuitive table output generator.
-  # spec.add_dependency "tty-table", "~> 0.12"
+  spec.add_dependency 'tty-table', '~> 0.12'
 
   # Print directory or structured data in a tree like format.
   # spec.add_dependency "tty-tree", "~> 0.4"

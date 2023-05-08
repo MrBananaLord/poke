@@ -4,6 +4,8 @@ PATH
     poke (0.1.0)
       pastel (~> 0.8)
       thor (~> 1.0)
+      tty-cursor (~> 0.7)
+      tty-table (~> 0.12)
 
 GEM
   remote: https://rubygems.org/
@@ -16,6 +18,8 @@ GEM
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    pry-nav (1.0.0)
+      pry (>= 0.9.10, < 0.15)
     rake (13.0.6)
     rake-compiler (1.2.1)
       rake
@@ -32,6 +36,11 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
+    strings (0.2.1)
+      strings-ansi (~> 0.2)
+      unicode-display_width (>= 1.5, < 3.0)
+      unicode_utils (~> 1.4)
+    strings-ansi (0.2.0)
     thor (1.2.1)
     tty (0.10.0)
       bundler (~> 2.0)
@@ -56,7 +65,13 @@ GEM
       tty-screen (~> 0.8)
       wisper (~> 2.0)
     tty-screen (0.8.1)
+    tty-table (0.12.0)
+      pastel (~> 0.8)
+      strings (~> 0.2.0)
+      tty-screen (~> 0.8)
     tty-which (0.5.0)
+    unicode-display_width (2.4.2)
+    unicode_utils (1.4.0)
     wisper (2.0.1)
 
 PLATFORMS
@@ -66,6 +81,7 @@ PLATFORMS
 DEPENDENCIES
   poke!
   pry
+  pry-nav
   rake (~> 13.0)
   rake-compiler
   rspec (~> 3.0)

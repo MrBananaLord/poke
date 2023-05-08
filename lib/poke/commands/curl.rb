@@ -1,45 +1,39 @@
 # frozen_string_literal: true
 
-require_relative '../command'
+require_relative '../helpers'
+require_relative '../group_variables'
 require 'json'
 require 'pathname'
-require 'pry'
 
 module Poke
   module Commands
-    class Curl < Poke::Command
+    class Curl
+      include Poke::Helpers
+
       def initialize(file, options)
         @file = file
         @options = options
       end
 
-      def execute(input: $stdin, output: $stdout, errors: $stderr)
-        # home = command(printer: :quiet).run('echo $HOME').out.strip
-        # endpoints = command(printer: :null).run('find $HOME/.poke -name "*.curl"')
+      def execute(output: $stdout, errors: $stderr)
+        group_variables = GroupVariables.from_path("#{::Pathname.new(@file).dirname}/variables.json")
 
-        # endpoint = prompt.select('Select the endpoint', endpoints.out.split("\n"), filter: true)
+        env = @options.fetch(:env, group_variables.default_env)
+        raise GroupVariables::InvalidEnv unless group_variables.valid_env?(env)
 
-        env = @options.fetch(:env, nil)
-        variables = JSON.parse(File.read("#{::Pathname.new(@file).dirname}/variables.json"))
-        env = variables.keys.include?(env) ? env : 'development'
-        variables = variables[env]
-
-        errors << variables
+        errors << group_variables.variables(env)
         errors << "\n\n"
 
-        out, err = command(printer: :null).run(variables, @file) rescue TTY::Command::ExitError 
+        out, err = begin
+          command(printer: :null).run(group_variables.variables(env), @file)
+        rescue StandardError
+          TTY::Command::ExitError
+        end
         errors << err
         output << "\n"
 
         output << out
         output << "\n"
-
-        # File.open("#{home}/.poke/response.json", 'w+') do |file|
-        #   file.write command(printer: :null, pty: true).run("#{variables} #{endpoint}").out
-        # end
-
-        # require 'tty-editor'
-        # TTY::Editor.open("#{home}/.poke/response.json")
       end
     end
   end
