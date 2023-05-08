@@ -2,8 +2,10 @@
 
 require_relative '../helpers'
 require_relative '../group_variables'
+
 require 'json'
 require 'pathname'
+require 'tty-editor'
 
 module Poke
   module Commands
@@ -32,8 +34,13 @@ module Poke
         errors << err
         output << "\n"
 
-        output << out
-        output << "\n"
+        path = "#{::Pathname.new(@file).parent.dirname}/response.json"
+        File.write(path, out)
+        TTY::Editor.open(path)
+
+        # depends on the option maybe?
+        # output << out
+        output << "kthxbye\n"
       end
     end
   end
