@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "thor"
+require 'thor'
 
 module Poke
   # Handle the application command line parsing
@@ -11,26 +11,26 @@ module Poke
     # Error raised by this runner
     Error = Class.new(StandardError)
 
-    desc "version", "poke version"
+    desc 'version', 'poke version'
     def version
-      require_relative "version"
+      require_relative 'version'
       puts "v#{Poke::VERSION}"
     end
     map %w[--version -v] => :version
 
-    desc "curl FILE", "Command description..."
-    method_option :help, aliases: "-h", type: :boolean,
-                         desc: "Display usage information"
+    desc 'curl FILE', 'Command description...'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    method_option :env, aliases: '-e', type: :string,
+                        desc: 'Set target environment'
     def curl(file)
       if options[:help]
-        invoke :help, ["curl"]
+        invoke :help, ['curl']
       else
-        require_relative "commands/curl"
+        require_relative 'commands/curl'
         Poke::Commands::Curl.new(file, options).execute
       end
     end
-
-    default_task :curl
 
     def self.exit_on_failure?
       true

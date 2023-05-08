@@ -19,9 +19,11 @@ module Poke
 
         # endpoint = prompt.select('Select the endpoint', endpoints.out.split("\n"), filter: true)
 
-        env = 'development' # TODO: how to pass options
-        variables = JSON.parse(File.read("#{::Pathname.new(@file).dirname}/variables.json"))[env]
-        # variables = variables.map { |e| e.join('=') }
+        env = @options.fetch(:env, nil)
+        variables = JSON.parse(File.read("#{::Pathname.new(@file).dirname}/variables.json"))
+        env = variables.keys.include?(env) ? env : 'development'
+        variables = variables[env]
+
         errors << variables
         errors << "\n\n"
 
