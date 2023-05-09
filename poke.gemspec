@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor', '~> 1.0'
 
   # Draw various frames and boxes in terminal window.
-  # spec.add_dependency "tty-box", "~> 0.7"
+  spec.add_dependency 'tty-box', '~> 0.7'
 
   # Terminal color capabilities detection.
   # spec.add_dependency "tty-color", "~> 0.6"

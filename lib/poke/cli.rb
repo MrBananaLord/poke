@@ -16,9 +16,9 @@ module Poke
       require_relative 'version'
       puts "v#{Poke::VERSION}"
     end
-    map %w[--version -v] => :version
+    map %w[--version] => :version
 
-    desc 'env', 'Command description...'
+    desc 'env', 'Display and edit environments'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
     def env(*)
@@ -30,19 +30,33 @@ module Poke
       end
     end
 
-    desc 'curl FILE', 'Command description...'
-    method_option :help, aliases: '-h', type: :boolean,
-                         desc: 'Display usage information'
-    method_option :env, aliases: '-e', type: :string,
-                        desc: 'Set target environment'
-    def curl(file)
+    desc 'curl', 'Find and execute a request'
+    method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
+    method_option :env, aliases: '-e', type: :string, desc: 'Set target environment'
+    method_option :verbose, aliases: '-v', type: :string, desc: 'Print out response body'
+    method_option :open, aliases: '-o', type: :string, desc: 'Open response in the editor'
+    def curl(*)
       if options[:help]
         invoke :help, ['curl']
       else
         require_relative 'commands/curl'
-        Poke::Commands::Curl.new(file, options).execute
+        Poke::Commands::Curl.new(options).execute
       end
     end
+
+    desc 'cat', 'Print last response body'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def cat(*)
+      if options[:help]
+        invoke :help, ['curl']
+      else
+        require_relative 'commands/cat'
+        Poke::Commands::Cat.new(options).execute
+      end
+    end
+
+    default_task :curl
 
     def self.exit_on_failure?
       true

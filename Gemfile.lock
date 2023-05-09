@@ -4,7 +4,9 @@ PATH
     poke (0.1.0)
       pastel (~> 0.8)
       thor (~> 1.0)
+      tty-box (~> 0.7)
       tty-cursor (~> 0.7)
+      tty-editor (~> 0.6)
       tty-table (~> 0.12)
 
 GEM
@@ -49,10 +51,16 @@ GEM
       tty-command
       tty-file (~> 0.10)
       tty-which (~> 0.4)
+    tty-box (0.7.0)
+      pastel (~> 0.8)
+      strings (~> 0.2.0)
+      tty-cursor (~> 0.7)
     tty-color (0.6.0)
     tty-command (0.10.1)
       pastel (~> 0.8)
     tty-cursor (0.7.1)
+    tty-editor (0.7.0)
+      tty-prompt (~> 0.22)
     tty-file (0.10.0)
       diff-lcs (~> 1.3)
       pastel (~> 0.8)

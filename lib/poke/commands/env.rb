@@ -1,73 +1,89 @@
 # frozen_string_literal: true
 
-require_relative '../helpers'
-require_relative '../group_variables'
+require_relative '../group'
+require_relative '../paint'
 
-require 'json'
-require 'tty-table'
+require 'pastel'
+
+require 'tty-box'
+require 'tty-command'
+require 'tty-cursor'
 require 'tty-editor'
+require 'tty-prompt'
+require 'tty-table'
 
 module Poke
   module Commands
     class Env
-      include Poke::Helpers
-
       def initialize(options)
         @options = options
-        @config_paths = command(printer: :null).run('find $HOME/.poke -name "variables.json"').out.split("\n")
-        @group_names = @config_paths.map { |path| Pathname.new(path).parent.basename.to_s }
       end
 
       def execute(output: $stdout)
-        group_name = prompt.select('Select the group', @group_names, filter: true, quiet: true)
+        output << Poke::Paint.welcome
+        groups = Poke::Group.all
+        group_name = TTY::Prompt.new.select('Select the group', groups.map(&:name), filter: true, quiet: true)
+        group = groups.find { |g| g.name == group_name }
 
-        manage_group_config(output:, group_name:)
+        manage_group_config(output:, group:)
       end
 
       private
 
-      def manage_group_config(output:, group_name:)
+      def cursor
+        @cursor ||= TTY::Cursor
+      end
+
+      def pastel
+        @pastel ||= Pastel.new
+      end
+
+      def manage_group_config(output:, group:)
+        output << cursor.save
+
+        render(output, group)
+
         loop do
-          config_path = @config_paths[@group_names.index(group_name)]
-          group_variables = GroupVariables.from_path(config_path)
+          case TTY::Prompt.new.keypress('', quiet: true)
+          when 'c'
+            group.config.default_env = TTY::Prompt.new.select(
+              'Select new default environment', group.config.envs,
+              filter: true, quiet: true
+            )
+            group.save_config!
 
-          output << cursor.save
-
-          render(output, group_name, group_variables)
-
-          case prompt.keypress('q → quit | s → set default env | e → edit config file', quiet: true)
-          when 's'
-            group_variables.default_env = prompt.select('Select new default environment', group_variables.envs,
-                                                        filter: true, quiet: true)
-            group_variables.save_to(config_path)
-
-            output << cursor.restore
-            output << cursor.clear_screen_down
+            render(output, group)
           when 'e'
-            TTY::Editor.open(config_path)
-            output << "kthxbye\n"
+            TTY::Editor.open(group.config_path)
+            output << Poke::Paint.farewell
             break
           when 'q'
-            output << "kthxbye\n"
+            output << Poke::Paint.farewell
             break
           end
         end
       end
 
-      def render(output, group, group_variables)
-        output << pastel.decorate(group.upcase, :magenta, :underline, :bold)
-        output << " (default env: #{group_variables.default_env})"
-        output << "\n"
+      def render(output, group)
+        output << cursor.restore
+        output << cursor.clear_screen_down
 
+        title = ['| ', pastel.decorate(group.name.upcase, :yellow, :underline, :bold), ' |'].join
+        footer = '| q → quit | c → change default env | e → edit config file |'
         table = TTY::Table.new(
-          header: ['env \\ var', *group_variables.variables(group_variables.default_env).keys],
-          rows: group_variables.envs.map do |name|
-            [name, *group_variables.variables(name).values]
+          header: ['env \\ var', *group.config.variables(group.config.default_env).keys],
+          rows: group.config.envs.map do |name|
+            [name, *group.config.variables(name).values]
           end
         )
 
-        output << TTY::Table::Renderer::Unicode.new(table).render
-        output << "\n"
+        # output << "\n"
+        output << TTY::Box.frame(align: :center, title: { top_center: title, bottom_center: footer }) do
+          [
+            "(default env: #{group.config.default_env})\n\n",
+            TTY::Table::Renderer::Unicode.new(table).render
+          ].join('')
+        end
       end
     end
   end
