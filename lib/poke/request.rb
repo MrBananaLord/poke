@@ -30,6 +30,10 @@ module Poke
       @group_name = group_name
     end
 
+    def use_count
+      LastRecentlyUsed.all['requests'][path.to_s] || 0
+    end
+
     def group
       Group.all.find { |g| g.name == group_name }
     end

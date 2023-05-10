@@ -81,7 +81,7 @@ module Poke
         output << TTY::Box.frame(align: :center, title: { top_center: title, bottom_center: footer }) do
           [
             "(default env: #{group.config.default_env})\n\n",
-            TTY::Table::Renderer::Unicode.new(table).render
+            table.render(:unicode, multiline: true, padding: [0,1,0,1])
           ].join('')
         end
       end

@@ -44,15 +44,15 @@ module Poke
       end
     end
 
-    desc 'cat', 'Print last response body'
+    desc 'cat [FILE_NAME]', 'Print response or stats'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
-    def cat(*)
+    def cat(file_name = 'response')
       if options[:help]
         invoke :help, ['curl']
       else
         require_relative 'commands/cat'
-        Poke::Commands::Cat.new(options).execute
+        Poke::Commands::Cat.new(file_name, options).execute
       end
     end
 

@@ -40,5 +40,9 @@ module Poke
     def requests
       @requests ||= Request.all.filter { |request| request.group_name == name }
     end
+
+    def use_count
+      LastRecentlyUsed.groups[name.to_s] || 0
+    end
   end
 end
