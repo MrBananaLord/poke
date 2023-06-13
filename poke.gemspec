@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "tty-color", "~> 0.6"
 
   # Execute shell commands with pretty logging.
-  # spec.add_dependency "tty-command", "~> 0.10"
+  spec.add_dependency 'tty-command', '~> 0.10'
 
   # Define, read and write app configurations.
   # spec.add_dependency "tty-config", "~> 0.4"

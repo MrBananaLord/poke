@@ -6,5 +6,4 @@ require_relative 'poke/group'
 require_relative 'poke/version'
 
 module Poke
-  class Error < StandardError; end
 end

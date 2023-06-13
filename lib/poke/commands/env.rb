@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../command'
 require_relative '../group'
 require_relative '../paint'
 
@@ -14,21 +15,16 @@ require 'tty-table'
 
 module Poke
   module Commands
-    class Env
-      def initialize(options)
-        @options = options
-      end
+    class Env < Poke::Command
+      private
 
-      def execute(output: $stdout)
-        output << Poke::Paint.welcome
+      def run(output: $stdout)
         groups = Poke::Group.all
         group_name = TTY::Prompt.new.select('Select the group', groups.map(&:name), filter: true, quiet: true)
         group = groups.find { |g| g.name == group_name }
 
         manage_group_config(output:, group:)
       end
-
-      private
 
       def cursor
         @cursor ||= TTY::Cursor
@@ -55,10 +51,8 @@ module Poke
             render(output, group)
           when 'e'
             TTY::Editor.open(group.config_path)
-            output << Poke::Paint.farewell
             break
           when 'q'
-            output << Poke::Paint.farewell
             break
           end
         end
@@ -81,7 +75,7 @@ module Poke
         output << TTY::Box.frame(align: :center, title: { top_center: title, bottom_center: footer }) do
           [
             "(default env: #{group.config.default_env})\n\n",
-            table.render(:unicode, multiline: true, padding: [0,1,0,1])
+            table.render(:unicode, multiline: true, padding: [0, 1, 0, 1])
           ].join('')
         end
       end

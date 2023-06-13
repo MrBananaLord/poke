@@ -8,15 +8,12 @@ module Poke
   #
   # @api public
   class CLI < Thor
-    # Error raised by this runner
-    Error = Class.new(StandardError)
-
     desc 'version', 'poke version'
     def version
       require_relative 'version'
       puts "v#{Poke::VERSION}"
     end
-    map %w[--version] => :version
+    map %w[--version -v] => :version
 
     desc 'env', 'Display and edit environments'
     method_option :help, aliases: '-h', type: :boolean,
@@ -33,8 +30,8 @@ module Poke
     desc 'curl', 'Find and execute a request'
     method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
     method_option :env, aliases: '-e', type: :string, desc: 'Set target environment'
-    method_option :verbose, aliases: '-v', type: :string, desc: 'Print out response body'
-    method_option :open, aliases: '-o', type: :string, desc: 'Open response in the editor'
+    method_option :print, aliases: '-p', type: :string, desc: 'Print out response body'
+    method_option :open, aliases: '-o', type: :string, desc: 'Open request in the editor'
     def curl(*)
       if options[:help]
         invoke :help, ['curl']
@@ -44,17 +41,19 @@ module Poke
       end
     end
 
-    desc 'cat [FILE_NAME]', 'Print response or stats'
-    method_option :help, aliases: '-h', type: :boolean,
-                         desc: 'Display usage information'
-    def cat(file_name = 'response')
+    desc 'response', 'Print out last response'
+    method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
+    def response(*)
       if options[:help]
-        invoke :help, ['curl']
+        invoke :help, ['response']
       else
-        require_relative 'commands/cat'
-        Poke::Commands::Cat.new(file_name, options).execute
+        require_relative 'commands/response'
+        Poke::Commands::Response.new(options).execute
       end
     end
+
+    require_relative 'commands/lru'
+    register Poke::Commands::Lru, 'lru', 'lru [SUBCOMMAND]', 'Manage usage statistics'
 
     default_task :curl
 

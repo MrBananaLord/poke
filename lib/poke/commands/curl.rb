@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../command'
 require_relative '../group'
 require_relative '../config'
 require_relative '../paint'
@@ -14,7 +15,7 @@ require 'tty-table'
 
 module Poke
   module Commands
-    class Curl
+    class Curl < Poke::Command
       WRITE_OUT_FIELDS = {
         'response_code' => ->(e) { e },
         'size_download' => ->(e) { format('%.2fkB', (e / 1000)) },
@@ -25,23 +26,21 @@ module Poke
         'time_redirect' => ->(e) { format('%.2fms', (e * 1000)) },
         'time_starttransfer' => ->(e) { format('%.2fms', (e * 1000)) },
         'time_total' => ->(e) { format('%.2fms', (e * 1000)) }
-      }
+      }.freeze
 
-      def initialize(options)
-        @options = options
-      end
+      private
 
-      def execute(output: $stdout, errors: $stderr)
-        output << Poke::Paint.welcome
-
-        choices = Request.all.sort_by(&:use_count).reverse.map do |request|
-          { "#{request.group_name}: #{request.name}": request.path }
-        end
+      def run(output: $stdout, errors: $stderr)
+        choices = Request.all.sort_by(&:use_count).reverse.map { |r| { r.name => r.path } }
 
         path = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
         LastRecentlyUsed.use!(namespace: 'requests', key: path)
-        group = Poke::Group.from_path(path)
-        LastRecentlyUsed.use!(namespace: 'group', key: group.name)
+        group = Poke::Group.from_request_path(path)
+        LastRecentlyUsed.use!(namespace: 'groups', key: group.name)
+
+        if @options.fetch(:open, nil)
+          return TTY::Editor.open(path)
+        end
 
         env = @options.fetch(:env, group.config.default_env)
         raise Poke::GroupConfig::InvalidEnv unless group.config.valid_env?(env)
@@ -73,23 +72,21 @@ module Poke
           table = TTY::Table.new(WRITE_OUT_FIELDS.map { |field, lambda| [field, lambda.call(stats[field])] }.to_a)
           output << table.render(:unicode, padding: [0, 1, 0, 1])
           output << "\n\n"
+
+          output << " source file:   #{Pastel.new.decorate(path.to_s, :magenta)}\n"
           output << " request url:   #{Pastel.new.decorate(stats['url'], :blue)}\n"
           output << " response path: #{Pastel.new.decorate(stats['filename_effective'], :magenta)}\n"
-
         end
 
-        if @options.fetch(:verbose, nil)
-          output << "\n#{File.read(Poke::Config.response_path)}\n"
-        elsif @options.fetch(:open, nil)
-          TTY::Editor.open(Poke::Config.response_path)
-        end
-        output << Poke::Paint.farewell
+        output << "\n#{File.read(Poke::Config.response_path)}\n" if @options.fetch(:print, nil)
       end
 
-      private
-
       def build_command(path)
-        command_lines = TTY::Command.new(printer: :null).run("cat #{path}").out.split(" \\\n").map(&:strip)
+        out = TTY::Command.new(printer: :null).run("cat #{path}").out
+        out << "\n" unless out[-1] == "\n"
+
+        command_lines = out.split(" \\\n").map(&:strip)
+
         comments = command_lines.filter { |line| line.start_with?('#') }.join(" \\\n")
         command_lines = command_lines.reject { |line| line.start_with?('#') }
         command_lines += additional_curl_params

@@ -14,8 +14,9 @@ module Poke
 
         request_paths.map do |path|
           path = Pathname.new(path)
-          group_name = path.parent.basename.to_s
-          name = path.basename.to_s
+
+          group_name = path.to_s.gsub(%r{#{Config.root_path}/([^\/]+)/.*}, '\1')
+          name = path.to_s.gsub(%r{#{Config.root_path}/(.*)\.curl}, '\1')
 
           new(group_name:, name:, path:)
         end
@@ -31,7 +32,7 @@ module Poke
     end
 
     def use_count
-      LastRecentlyUsed.all['requests'][path.to_s] || 0
+      LastRecentlyUsed.requests[path.to_s] || 0
     end
 
     def group

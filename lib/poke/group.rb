@@ -21,8 +21,9 @@ module Poke
       end
     end
 
-    def self.from_path(path)
-      new(name: path.parent.basename.to_s, config_path: "#{path.dirname}/config.json")
+    def self.from_request_path(path)
+      group_name = path.to_s.gsub(%r{#{Config.root_path}/([^\/]+)/.*}, '\1')
+      new(name: group_name, config_path: "#{Config.root_path}/#{group_name}/config.json")
     end
 
     attr_reader :name, :config_path, :config
