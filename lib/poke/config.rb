@@ -4,6 +4,8 @@ require 'json'
 
 module Poke
   class Config
+    class NotFound < StandardError; end
+
     PATH = "#{Dir.home}/.poke.json".freeze
     DEFAULT_ROOT_PATH = "#{Dir.home}/.poke".freeze
 
@@ -25,6 +27,19 @@ module Poke
 
     def self.lru_path
       [root_path, 'lru.json'].join('/')
+    end
+
+    def self.find_by_alias(value)
+      result = all.dig('aliases', value)
+      raise NotFound unless result
+
+      result
+    end
+
+    def self.set_alias!(value, path)
+      all['aliases'] ||= {}
+      all['aliases'][value] = path.to_s
+      File.write(PATH, all.to_json)
     end
   end
 end

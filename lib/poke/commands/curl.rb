@@ -31,16 +31,23 @@ module Poke
       private
 
       def run(output: $stdout, errors: $stderr)
-        choices = Request.all.sort_by(&:use_count).reverse.map { |r| { r.name => r.path } }
-
-        path = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
+        if (name = @options.fetch(:alias, nil))
+          path = Config.find_by_alias(name)
+        else
+          choices = Request.all.sort_by(&:use_count).reverse.map { |r| { r.name => r.path } }
+          path = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
+        end
         LastRecentlyUsed.use!(namespace: 'requests', key: path)
         group = Poke::Group.from_request_path(path)
         LastRecentlyUsed.use!(namespace: 'groups', key: group.name)
 
-        if @options.fetch(:open, nil)
-          return TTY::Editor.open(path)
+        if (name = @options.fetch(:set_alias, nil))
+          Config.set_alias!(name, path)
+          output << "#{path} aliased to #{name}\n\n"
+          return
         end
+
+        return TTY::Editor.open(path) if @options.fetch(:open, nil)
 
         env = @options.fetch(:env, group.config.default_env)
         raise Poke::GroupConfig::InvalidEnv unless group.config.valid_env?(env)

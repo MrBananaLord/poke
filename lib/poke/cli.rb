@@ -32,6 +32,8 @@ module Poke
     method_option :env, aliases: '-e', type: :string, desc: 'Set target environment'
     method_option :print, aliases: '-p', type: :string, desc: 'Print out response body'
     method_option :open, aliases: '-o', type: :string, desc: 'Open request in the editor'
+    method_option :set_alias, aliases: '-A', type: :string, desc: 'Set request alias'
+    method_option :alias, aliases: '-a', type: :string, desc: 'Find request by alias instead of searching it'
     def curl(*)
       if options[:help]
         invoke :help, ['curl']
