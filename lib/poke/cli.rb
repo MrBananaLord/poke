@@ -53,6 +53,18 @@ module Poke
       end
     end
 
+    desc 'config', 'Manage poke config'
+    method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
+    method_option :open, aliases: '-o', type: :string, desc: 'Open config in the editor'
+    def config(*)
+      if options[:help]
+        invoke :help, ['response']
+      else
+        require_relative 'commands/config'
+        Poke::Commands::Config.new(options).execute
+      end
+    end
+
     require_relative 'commands/lru'
     register Poke::Commands::Lru, 'lru', 'lru [SUBCOMMAND]', 'Manage usage statistics'
 
