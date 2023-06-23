@@ -34,10 +34,11 @@ module Poke
         if (name = @options.fetch(:name, nil))
           path = Config.find_by_alias(name)
         else
-          choices = Request.all.sort_by(&:use_count).reverse.map { |r| { r.name => r.path } }
+          choices = Request.all.sort_by(&:position).map { |r| { r.name => r.path } }
           path = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
         end
-        LastRecentlyUsed.use!(namespace: 'requests', key: path)
+        request = Request.find_by_path(path)
+        LastRecentlyUsed.use!(namespace: 'requests', key: request.name)
         group = Poke::Group.from_request_path(path)
         LastRecentlyUsed.use!(namespace: 'groups', key: group.name)
 

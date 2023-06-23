@@ -24,10 +24,15 @@ module Poke
 
     def self.use!(namespace:, key:)
       all[namespace] ||= {}
-      all[namespace][key.to_s] ||= 0
-      all[namespace][key.to_s] += 1
+      all[namespace]['lru'] ||= []
+      all[namespace]['lru'].delete(key.to_s)
+      all[namespace]['lru'].unshift(key.to_s)
 
       File.write(Poke::Config.lru_path, all.to_json)
+    end
+
+    def self.position(namespace:, key:)
+      all.dig(namespace, 'lru')&.index(key) || Float::INFINITY
     end
   end
 end
