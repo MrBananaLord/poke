@@ -22,9 +22,5 @@ module Poke
     def self.response_path
       [root_path, 'response.json'].join('/')
     end
-
-    def self.lru_path
-      [root_path, 'lru.json'].join('/')
-    end
   end
 end

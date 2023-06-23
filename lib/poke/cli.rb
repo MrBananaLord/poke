@@ -52,9 +52,6 @@ module Poke
       end
     end
 
-    require_relative 'commands/lru'
-    register Poke::Commands::Lru, 'lru', 'lru [SUBCOMMAND]', 'Manage usage statistics'
-
     default_task :curl
 
     def self.exit_on_failure?

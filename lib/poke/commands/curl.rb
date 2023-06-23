@@ -4,7 +4,6 @@ require_relative '../command'
 require_relative '../group'
 require_relative '../config'
 require_relative '../paint'
-require_relative '../last_recently_used'
 
 require 'pathname'
 require 'pastel'
@@ -31,12 +30,10 @@ module Poke
       private
 
       def run(output: $stdout, errors: $stderr)
-        choices = Request.all.sort_by(&:use_count).reverse.map { |r| { r.name => r.path } }
+        choices = Request.all.map { |r| { r.name => r.path } }
 
         path = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
-        LastRecentlyUsed.use!(namespace: 'requests', key: path)
         group = Poke::Group.from_request_path(path)
-        LastRecentlyUsed.use!(namespace: 'groups', key: group.name)
 
         if @options.fetch(:open, nil)
           return TTY::Editor.open(path)
