@@ -31,7 +31,7 @@ module Poke
       private
 
       def run(output: $stdout, errors: $stderr)
-        if (name = @options.fetch(:alias, nil))
+        if (name = @options.fetch(:name, nil))
           path = Config.find_by_alias(name)
         else
           choices = Request.all.sort_by(&:use_count).reverse.map { |r| { r.name => r.path } }
@@ -41,7 +41,7 @@ module Poke
         group = Poke::Group.from_request_path(path)
         LastRecentlyUsed.use!(namespace: 'groups', key: group.name)
 
-        if (name = @options.fetch(:set_alias, nil))
+        if (name = @options.fetch(:set_name, nil))
           Config.set_alias!(name, path)
           output << "#{path} aliased to #{name}\n\n"
           return
@@ -60,32 +60,32 @@ module Poke
           [['CMD', curl_command]] +
           [['COMMENTS', comments]]
         )
-        output << table.render(:unicode, multiline: true, padding: [0, 1, 0, 1])
-        output << "\n\n"
+        errors << table.render(:unicode, multiline: true, padding: [0, 1, 0, 1])
+        errors << "\n\n"
 
         command = TTY::Command.new(printer: :null).run!(
           group.config.variables(env),
           curl_command
         )
         if command.failure?
-          errors << Pastel.new.decorate(command.err, :red)
+          output << Pastel.new.decorate(command.err, :red)
           output << Poke::Paint.farewell
           return
         else
           errors << Pastel.new.decorate(command.err, :green)
-          output << "\n"
+          errors << "\n"
           stats = JSON.parse(command.out)
 
           table = TTY::Table.new(WRITE_OUT_FIELDS.map { |field, lambda| [field, lambda.call(stats[field])] }.to_a)
-          output << table.render(:unicode, padding: [0, 1, 0, 1])
-          output << "\n\n"
+          errors << table.render(:unicode, padding: [0, 1, 0, 1])
+          errors << "\n\n"
 
-          output << " source file:   #{Pastel.new.decorate(path.to_s, :magenta)}\n"
-          output << " request url:   #{Pastel.new.decorate(stats['url'], :blue)}\n"
-          output << " response path: #{Pastel.new.decorate(stats['filename_effective'], :magenta)}\n"
+          errors << " source file:   #{Pastel.new.decorate(path.to_s, :magenta)}\n"
+          errors << " request url:   #{Pastel.new.decorate(stats['url'], :blue)}\n"
+          errors << " response path: #{Pastel.new.decorate(stats['filename_effective'], :magenta)}\n"
         end
 
-        output << "\n#{File.read(Poke::Config.response_path)}\n" if @options.fetch(:print, nil)
+        output << "\n#{File.read(Poke::Config.response_path)}\n"
       end
 
       def build_command(path)
