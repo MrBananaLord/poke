@@ -32,32 +32,32 @@ module Poke
 
       def run(output: $stdout, errors: $stderr)
         if (name = @options.fetch(:name, nil))
-          path = Config.find_by_alias(name)
+          request = Request.find_by_name(Config.find_request_name_by_alias(name))
         else
-          choices = Request.all.sort_by(&:position).map { |r| { r.name => r.path } }
-          path = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
+          choices = Request.all.sort_by(&:position).map(&:name)
+          name = TTY::Prompt.new.select('Select the endpoint', choices, filter: true, quiet: true)
+          request = Request.find_by_name(name)
         end
-        request = Request.find_by_path(path)
-        LastRecentlyUsed.use!(namespace: 'requests', key: request.name)
-        group = Poke::Group.from_request_path(path)
-        LastRecentlyUsed.use!(namespace: 'groups', key: group.name)
+
+        request.use!
+        request.group.use!
 
         if (name = @options.fetch(:set_name, nil))
-          Config.set_alias!(name, path)
-          output << "#{path} aliased to #{name}\n\n"
+          Config.set_alias!(name, request.name)
+          output << "#{request.name} aliased to #{name}\n\n"
           return
         end
 
-        return TTY::Editor.open(path) if @options.fetch(:open, nil)
+        return TTY::Editor.open(request.path) if @options.fetch(:open, nil)
 
-        env = @options.fetch(:env, group.config.default_env)
-        raise Poke::GroupConfig::InvalidEnv unless group.config.valid_env?(env)
+        env = @options.fetch(:env, request.group.config.default_env)
+        raise Poke::GroupConfig::InvalidEnv unless request.group.config.valid_env?(env)
 
-        curl_command, comments = build_command(path)
+        curl_command, comments = build_command(request.path)
 
         table = TTY::Table.new(
           [['ENV', env]] +
-          group.config.variables(env).to_a +
+          request.group.config.variables(env).to_a +
           [['CMD', curl_command]] +
           [['COMMENTS', comments]]
         )
@@ -65,7 +65,7 @@ module Poke
         errors << "\n\n"
 
         command = TTY::Command.new(printer: :null).run!(
-          group.config.variables(env),
+          request.group.config.variables(env),
           curl_command
         )
         if command.failure?
@@ -81,7 +81,7 @@ module Poke
           errors << table.render(:unicode, padding: [0, 1, 0, 1])
           errors << "\n\n"
 
-          errors << " source file:   #{Pastel.new.decorate(path.to_s, :magenta)}\n"
+          errors << " source file:   #{Pastel.new.decorate(request.path.to_s, :magenta)}\n"
           errors << " request url:   #{Pastel.new.decorate(stats['url'], :blue)}\n"
           errors << " response path: #{Pastel.new.decorate(stats['filename_effective'], :magenta)}\n"
         end

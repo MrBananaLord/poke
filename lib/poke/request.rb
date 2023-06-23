@@ -23,8 +23,8 @@ module Poke
       end
     end
 
-    def self.find_by_path(path)
-      all.find { |request| request.path == path }
+    def self.find_by_name(name)
+      all.find { |request| request.name == name }
     end
 
     attr_reader :path, :name, :group_name
@@ -37,6 +37,10 @@ module Poke
 
     def position
       LastRecentlyUsed.position(namespace: 'requests', key: name.to_s)
+    end
+
+    def use!
+      LastRecentlyUsed.use!(namespace: 'requests', key: name.to_s)
     end
 
     def group

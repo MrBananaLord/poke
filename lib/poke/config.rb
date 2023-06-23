@@ -29,7 +29,7 @@ module Poke
       [root_path, 'lru.json'].join('/')
     end
 
-    def self.find_by_alias(value)
+    def self.find_request_name_by_alias(value)
       result = all.dig('aliases', value)
       raise NotFound unless result
 

@@ -45,5 +45,9 @@ module Poke
     def position
       LastRecentlyUsed.position(namespace: 'groups', key: name.to_s)
     end
+
+    def use!
+      LastRecentlyUsed.use!(namespace: 'groups', key: name.to_s)
+    end
   end
 end
