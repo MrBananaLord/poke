@@ -3,11 +3,11 @@
 require_relative 'lib/poke/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'poke'
+  spec.name = 'poke-your-api'
   spec.license = 'MIT'
   spec.version = Poke::VERSION
   spec.authors = ['Jan Bator']
-  spec.email = ['jan@bloomandwild.com']
+  spec.email = ['jan.bator@gmail.com']
 
   spec.summary = 'manage curl requests'
   spec.homepage = 'https://github.com/MrBananaLord/poke'
