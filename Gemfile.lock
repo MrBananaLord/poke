@@ -5,6 +5,7 @@ PATH
       pastel (~> 0.8)
       thor (~> 1.0)
       tty-box (~> 0.7)
+      tty-command (~> 0.10)
       tty-cursor (~> 0.7)
       tty-editor (~> 0.6)
       tty-table (~> 0.12)
@@ -90,9 +91,9 @@ DEPENDENCIES
   poke!
   pry
   pry-nav
-  rake (~> 13.0)
+  rake
   rake-compiler
-  rspec (~> 3.0)
+  rspec
   tty
 
 BUNDLED WITH
