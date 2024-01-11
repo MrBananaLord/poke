@@ -36,7 +36,7 @@ module Poke
         else
           choices = Request.all.sort_by(&:position).map(&:name_with_alias)
           name = TTY::Prompt.new(interrupt: :exit).select('Select the endpoint', choices, filter: true, quiet: true)
-          request = Request.find_by_name(name)
+          request = Request.find_by_name_with_alias(name)
         end
 
         request.use!

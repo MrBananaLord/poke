@@ -28,6 +28,10 @@ module Poke
       all.find { |request| request.name == name }
     end
 
+    def self.find_by_name_with_alias(name)
+      all.find { |request| request.name_with_alias == name }
+    end
+
     attr_reader :path, :name, :alias_name, :group_name
 
     def initialize(path:, name:, alias_name:, group_name:)
@@ -38,7 +42,7 @@ module Poke
     end
 
     def name_with_alias
-      "#{name}#{alias_name ? " (#{alias_name})" : ''}"
+      @name_with_alias ||= "#{name}#{alias_name ? " (#{alias_name})" : ''}"
     end
 
     def position
