@@ -13,7 +13,7 @@ end
 begin
   # run default command if the first command is not recognised
   Poke::CLI.start(ARGV)
-rescue Poke::CLI::Error => err
-  puts "ERROR: #{err.message}"
+rescue Poke::CLI::Error => e
+  puts "ERROR: #{e.message}"
   exit 1
 end

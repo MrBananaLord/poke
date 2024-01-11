@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../command'
+require_relative '../config'
 
 require 'tty-command'
 
@@ -10,7 +11,7 @@ module Poke
       private
 
       def run(output: $stdout)
-        out, _err = TTY::Command.new(printer: :null).run("cat #{Poke::Config.root_path}/response.json")
+        out, _err = TTY::Command.new(printer: :null).run("cat #{Poke::Config.response_path}")
         output << "#{out}\n"
       end
     end

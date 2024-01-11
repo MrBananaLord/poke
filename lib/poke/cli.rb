@@ -15,6 +15,12 @@ module Poke
     end
     map %w[--version -v] => :version
 
+    desc 'init', 'Setup config directory and example API'
+    def init
+      require_relative 'commands/init'
+      Poke::Commands::Init.new.execute
+    end
+
     desc 'env', 'Display and edit environments'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
@@ -50,18 +56,6 @@ module Poke
       else
         require_relative 'commands/response'
         Poke::Commands::Response.new(options).execute
-      end
-    end
-
-    desc 'config', 'Manage poke config'
-    method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
-    method_option :open, aliases: '-o', type: :string, desc: 'Open config in the editor'
-    def config(*)
-      if options[:help]
-        invoke :help, ['response']
-      else
-        require_relative 'commands/config'
-        Poke::Commands::Config.new(options).execute
       end
     end
 

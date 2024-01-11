@@ -6,19 +6,17 @@ module Poke
   class Config
     class NotFound < StandardError; end
 
-    PATH = "#{Dir.home}/.poke.json".freeze
-    DEFAULT_ROOT_PATH = "#{Dir.home}/.poke".freeze
-
-    def self.all
-      @all ||= begin
-        config = File.exist?(PATH) ? JSON.parse(File.read(PATH)) : {}
-        config['root_path'] ||= DEFAULT_ROOT_PATH
-        config
-      end
-    end
+    ROOT_PATH = "#{Dir.home}/.poke".freeze
 
     def self.root_path
-      all['root_path']
+      ROOT_PATH
+    end
+
+    def self.valid?
+      Dir.exist?("#{Dir.home}/.poke") &&
+        File.exist?("#{Dir.home}/.poke/aliases.json") &&
+        File.exist?("#{Dir.home}/.poke/lru.json") &&
+        File.exist?("#{Dir.home}/.poke/response.json")
     end
 
     def self.response_path
@@ -29,17 +27,25 @@ module Poke
       [root_path, 'lru.json'].join('/')
     end
 
+    def self.aliases_path
+      [root_path, 'aliases.json'].join('/')
+    end
+
+    def self.aliases
+      @aliases ||= JSON.parse(File.read(aliases_path))
+    end
+
     def self.find_request_name_by_alias(value)
-      result = all.dig('aliases', value)
+      result = aliases[value]
+
       raise NotFound unless result
 
       result
     end
 
     def self.set_alias!(value, path)
-      all['aliases'] ||= {}
-      all['aliases'][value] = path.to_s
-      File.write(PATH, all.to_json)
+      aliases[value] = path.to_s
+      File.write(aliases_path, aliases.to_json)
     end
   end
 end
