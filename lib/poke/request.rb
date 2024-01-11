@@ -17,8 +17,9 @@ module Poke
 
           group_name = path.to_s.gsub(%r{#{Config.root_path}/([^\/]+)/.*}, '\1')
           name = path.to_s.gsub(%r{#{Config.root_path}/(.*)\.curl}, '\1')
+          alias_name = Config.find_alias_by_request_name(name)
 
-          new(group_name:, name:, path:)
+          new(group_name:, name:, alias_name:, path:)
         end
       end
     end
@@ -27,12 +28,17 @@ module Poke
       all.find { |request| request.name == name }
     end
 
-    attr_reader :path, :name, :group_name
+    attr_reader :path, :name, :alias_name, :group_name
 
-    def initialize(path:, name:, group_name:)
+    def initialize(path:, name:, alias_name:, group_name:)
       @path = path
       @name = name
+      @alias_name = alias_name
       @group_name = group_name
+    end
+
+    def name_with_alias
+      "#{name}#{alias_name ? " (#{alias_name})" : ''}"
     end
 
     def position

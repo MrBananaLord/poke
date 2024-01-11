@@ -43,6 +43,10 @@ module Poke
       result
     end
 
+    def self.find_alias_by_request_name(value)
+      aliases.find { |_k, v| v == value }&.first
+    end
+
     def self.set_alias!(value, path)
       aliases[value] = path.to_s
       File.write(aliases_path, aliases.to_json)
