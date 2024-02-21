@@ -48,6 +48,7 @@ module Poke
     end
 
     def self.set_alias!(value, path)
+      aliases.delete_if { |_k, v| v == path.to_s }
       aliases[value] = path.to_s
       File.write(aliases_path, aliases.to_json)
     end
