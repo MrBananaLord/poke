@@ -48,6 +48,19 @@ module Poke
       end
     end
 
+    desc 'speed', 'Run a speed test for an endpoint'
+    method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
+    method_option :env, aliases: '-e', type: :string, desc: 'Set target environment'
+    method_option :name, aliases: '-n', type: :string, desc: 'Find request by name'
+    def speed(*)
+      if options[:help]
+        invoke :help, ['curl']
+      else
+        require_relative 'commands/speed'
+        Poke::Commands::Speed.new(options).execute
+      end
+    end
+
     desc 'response', 'Print out last response'
     method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
     def response(*)
