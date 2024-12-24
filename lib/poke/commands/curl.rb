@@ -61,7 +61,13 @@ module Poke
           [['CMD', curl_command]] +
           [['COMMENTS', comments]]
         )
-        errors << table.render(:unicode, multiline: true, padding: [0, 1, 0, 1])
+        errors << table.render(
+          :unicode, 
+          multiline: true, 
+          resize: true, 
+          column_widths: [20,80],
+          alignments: [:right, :left]
+        )
         errors << "\n\n"
 
         command = TTY::Command.new(printer: :null).run!(
