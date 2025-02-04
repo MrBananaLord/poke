@@ -99,7 +99,7 @@ module Poke
         out = TTY::Command.new(printer: :null).run("cat #{path}").out
         out << "\n" unless out[-1] == "\n"
 
-        command_lines = out.split(" \\\n").map(&:strip)
+        command_lines = out.split(/ \\\n|\n/).map(&:strip)
 
         comments = command_lines.filter { |line| line.start_with?('#') }.join(" \\\n")
         command_lines = command_lines.reject { |line| line.start_with?('#') }
