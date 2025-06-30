@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    poke-your-api (0.1.0)
+    poke-your-api (0.3.0)
       pastel (~> 0.8)
       thor (~> 1.0)
       tty-box (~> 0.7)
@@ -74,6 +74,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-linux
 
 DEPENDENCIES

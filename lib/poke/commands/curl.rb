@@ -5,6 +5,7 @@ require_relative '../group'
 require_relative '../config'
 require_relative '../paint'
 require_relative '../last_recently_used'
+require_relative '../curl_parser'
 
 require 'pathname'
 require 'pastel'
@@ -96,16 +97,14 @@ module Poke
       end
 
       def build_command(path)
-        out = TTY::Command.new(printer: :null).run("cat #{path}").out
-        out << "\n" unless out[-1] == "\n"
-
-        command_lines = out.split(/ \\\n|\n/).map(&:strip)
-
-        comments = command_lines.filter { |line| line.start_with?('#') }.join(" \\\n")
-        command_lines = command_lines.reject { |line| line.start_with?('#') }
-        command_lines += additional_curl_params
-
-        [command_lines.join(" \\\n  "), comments]
+        content = File.read(path)
+        parser = CurlParser.new(content)
+        
+        # Add our additional curl parameters
+        parser.add_argument("-o #{Poke::Config.response_path}")
+        parser.add_argument('-w "%{json}"')
+        
+        [parser.to_command_with_line_continuation, parser.comments.join("\n")]
       end
 
       # rubocop:disable Style/FormatStringToken
