@@ -24,6 +24,8 @@ module Poke
     desc 'env', 'Display and edit environments'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
+    method_option :open, aliases: '-o', type: :boolean,
+                        desc: 'Open config in the editor'
     def env(*)
       if options[:help]
         invoke :help, ['env']

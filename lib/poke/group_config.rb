@@ -39,5 +39,9 @@ module Poke
     def variables(env)
       @values['envs'][env]
     end
+
+    def to_h
+      @values
+    end
   end
 end
