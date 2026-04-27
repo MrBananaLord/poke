@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    poke-your-api (0.3.0)
+    poke-your-api (0.4.0)
       pastel (~> 0.8)
       thor (~> 1.0)
       tty-box (~> 0.7)
