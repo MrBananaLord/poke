@@ -21,6 +21,11 @@ Use `poke -n alias_name` to run the request with the specified alias.
 ### Editing requests
 Use `poke -o -n alias_name` or `poke -o` to open the request in your default editor (you can overwrite it by setting `EDITOR` environment variable).
 
+### Piping output
+Use `poke | jq` to interactively select request and format response body.
+
+If you want only response body without diagnostics, use `poke 2>/dev/null | jq`.
+
 ### Adding requests
 Use `poke new` to create request file interactively. Command lets you pick existing subdirectory under `~/.poke` or create new nested one, then opens new `.curl` file with starter template.
 

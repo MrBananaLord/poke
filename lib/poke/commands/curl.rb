@@ -12,6 +12,7 @@ require 'pastel'
 
 require 'tty-command'
 require 'tty-editor'
+require 'tty-prompt'
 require 'tty-table'
 
 module Poke
@@ -36,7 +37,7 @@ module Poke
           request = Request.find_by_name(Config.find_request_name_by_alias(name))
         else
           choices = Request.all.sort_by(&:position).map(&:name_with_alias)
-          name = TTY::Prompt.new(interrupt: :exit).select('Select the endpoint', choices, filter: true, quiet: true)
+          name = select_request_name(choices, errors)
           request = Request.find_by_name_with_alias(name)
         end
 
@@ -76,8 +77,8 @@ module Poke
           curl_command
         )
         if command.failure?
-          output << Pastel.new.decorate(command.err, :red)
-          output << Poke::Paint.farewell
+          errors << Pastel.new.decorate(command.err, :red)
+          errors << Poke::Paint.farewell
           return
         else
           errors << Pastel.new.decorate(command.err, :green)
@@ -115,6 +116,30 @@ module Poke
         ]
       end
       # rubocop:enable Style/FormatStringToken
+
+      def select_request_name(choices, errors)
+        with_prompt_output_stream(errors) do |prompt_output|
+          TTY::Prompt.new(interrupt: :exit, output: prompt_output).select(
+            'Select the endpoint', choices, filter: true, quiet: true
+          )
+        end
+      end
+
+      def with_prompt_output_stream(errors)
+        stream = default_prompt_output_stream(errors)
+        return yield(stream) if stream
+
+        File.open('/dev/tty', 'w') { |tty| yield(tty) }
+      rescue Errno::ENOENT, Errno::ENXIO, Errno::EACCES
+        yield(errors)
+      end
+
+      def default_prompt_output_stream(errors)
+        return errors if errors.respond_to?(:tty?) && errors.tty?
+        return $stderr if $stderr.respond_to?(:tty?) && $stderr.tty?
+
+        nil
+      end
     end
   end
 end
