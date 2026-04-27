@@ -35,6 +35,17 @@ module Poke
       end
     end
 
+    desc 'new', 'Create a new request'
+    method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
+    def new(*)
+      if options[:help]
+        invoke :help, ['new']
+      else
+        require_relative 'commands/new'
+        Poke::Commands::New.new(options).execute
+      end
+    end
+
     desc 'curl', 'Find and execute a request'
     method_option :help, aliases: '-h', type: :boolean, desc: 'Display usage information'
     method_option :env, aliases: '-e', type: :string, desc: 'Set target environment'

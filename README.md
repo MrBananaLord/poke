@@ -22,6 +22,9 @@ Use `poke -n alias_name` to run the request with the specified alias.
 Use `poke -o -n alias_name` or `poke -o` to open the request in your default editor (you can overwrite it by setting `EDITOR` environment variable).
 
 ### Adding requests
+Use `poke new` to create request file interactively. Command lets you pick existing subdirectory under `~/.poke` or create new nested one, then opens new `.curl` file with starter template.
+
+Manual option:
 Create a new `.curl` file in `~/.poke/<any_dir_with_config>/<any_file_or_dir_with_file>`.
 
 The example directory tree could look like:
