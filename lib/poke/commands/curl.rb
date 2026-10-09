@@ -55,6 +55,11 @@ module Poke
         env = @options.fetch(:env, request.group.config.default_env)
         raise Poke::GroupConfig::InvalidEnv unless request.group.config.valid_env?(env)
 
+        if @options[:print]
+          print_resolved_curl(request, env, output)
+          return
+        end
+
         curl_command, comments = build_command(request.path)
 
         table = TTY::Table.new(
@@ -95,6 +100,11 @@ module Poke
         end
 
         output << "\n#{File.read(Poke::Config.response_path)}\n"
+      end
+
+      def print_resolved_curl(request, env, output)
+        parser = CurlParser.new(File.read(request.path))
+        output << "#{parser.to_resolved_command(request.group.config.variables(env), multiline: true)}\n"
       end
 
       def build_command(path)

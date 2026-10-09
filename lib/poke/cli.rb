@@ -52,6 +52,8 @@ module Poke
     method_option :open, aliases: '-o', type: :string, desc: 'Open request in the editor'
     method_option :set_name, aliases: '-N', type: :string, desc: 'Set request name'
     method_option :name, aliases: '-n', type: :string, desc: 'Find request by name'
+    method_option :print, aliases: '-p', type: :boolean,
+                          desc: 'Print a shareable curl command without executing it'
     def curl(*)
       if options[:help]
         invoke :help, ['curl']

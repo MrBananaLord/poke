@@ -18,6 +18,11 @@ Use `poke -N alias_name` to set the alias for chosen request.
 
 Use `poke -n alias_name` to run the request with the specified alias.
 
+### Shareable curl
+Use `poke -e env_name -n alias_name --print` (or `-p`) to print the request as a curl command with that environment's variables filled in.
+
+The request is not executed. The command is written to stdout, without poke's own output flags, so it can be copied or piped.
+
 ### Editing requests
 Use `poke -o -n alias_name` or `poke -o` to open the request in your default editor (you can overwrite it by setting `EDITOR` environment variable).
 

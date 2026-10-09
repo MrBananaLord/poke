@@ -80,6 +80,27 @@ RSpec.describe Poke::Commands::Curl do
     expect(TTY::Prompt).to have_received(:new).with(interrupt: :exit, output: errors)
   end
 
+  it 'prints a resolved curl command without executing it' do
+    allow(File).to receive(:read).with(request.path).and_return(<<~CURL)
+      # fetch users
+      curl "$BASE_URL/users" -H "Authorization: Bearer $TOKEN"
+    CURL
+    allow(group_config).to receive(:variables).with('staging').and_return(
+      'BASE_URL' => 'https://example.test',
+      'TOKEN' => 's3cret'
+    )
+    expect(tty_command).not_to receive(:run!)
+
+    run_command(env: 'staging', print: true)
+
+    expect(output.string).to eq(<<~CMD)
+      curl \\
+        "https://example.test/users" \\
+        -H "Authorization: Bearer s3cret"
+    CMD
+    expect(errors.string).to eq('')
+  end
+
   it 'writes command failure details to stderr not stdout' do
     command_result = instance_double(TTY::Command::Result, failure?: true, err: 'curl failed', out: '{}')
     allow(tty_command).to receive(:run!).and_return(command_result)
